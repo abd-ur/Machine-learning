@@ -1,0 +1,61 @@
+df<- read.csv(file.choose())
+library(mlbench)
+install.packages("caret")
+library(caret)
+?dtree
+install.packages("rpart.plot")
+library(rpart)
+library(rpart.plot)
+library(datasets)
+install.packages("caTools")
+library(caTools)
+library(dplyr)
+library(magrittr)
+set.seed(123)
+sample_data = sample.split(df, SplitRatio = 0.8)
+train_data <- subset(df, sample_data == TRUE)
+test_data <- subset(df, sample_data == FALSE)
+#Rpart is a powerful machine learning library in R that is used for building classification and regression trees. This library implements recursive partitioning and is very easy to use
+fit <- rpart(HeartDisease~., data = train_data, method = 'class')
+rpart.plot(fit, extra = 106)
+predict_unseen <-predict(fit, test_data, type = 'class')
+table_mat <- table(test_data$HeartDisease, predict_unseen)
+table_mat
+ac_Test <- sum(diag(table_mat)) / sum(table_mat)
+ac_Test
+print(paste('Accuracy for test is found to be', ac_Test))
+
+#SUPPORT VECTOR MACHINE ALGORITHM
+install.packages('e1071')
+library(e1071)
+fit = svm(HeartDisease~., data = train_data, type = 'C-classification',kernel='linear')
+predict_unseen <-predict(fit, test_data,type = 'C-classification' ,kernel='linear')
+table_mat <- table(test_data$HeartDisease, predict_unseen)
+table_mat
+ac_Test <- sum(diag(table_mat)) / sum(table_mat)
+ac_Test
+print(paste('Accuracy for test is found to be', ac_Test))
+#NAIVE BAYES
+fit <- naiveBayes(HeartDisease~., data = train_data, method = 'class')
+predict_unseen <-predict(fit, test_data, type = 'class')
+table_mat <- table(test_data$HeartDisease, predict_unseen)
+table_mat
+ac_Test <- sum(diag(table_mat)) / sum(table_mat)
+ac_Test
+print(paste('Accuracy for test is found to be', ac_Test))
+#LINEAR REGRESSION
+fit <- lm(HeartDisease~., data = train_data, method = "qr")
+predict_unseen <-predict(fit, test_data,method = "qr")
+table_mat <- table(test_data$HeartDisease, predict_unseen)
+table_mat
+ac_Test <- sum(diag(table_mat)) / sum(table_mat)
+ac_Test
+print(paste('Accuracy for test is found to be', ac_Test))
+#LOGISTIC REGRESSION
+fit <-glm(HeartDisease~., data = train_data, family = 'binomial')
+predict_unseen <-predict(fit, test_data,family = 'binomial')
+table_mat <- table(test_data$HeartDisease, predict_unseen)
+table_mat
+ac_Test <- sum(diag(table_mat)) / sum(table_mat)
+ac_Test
+print(paste('Accuracy for test is found to be', ac_Test))
